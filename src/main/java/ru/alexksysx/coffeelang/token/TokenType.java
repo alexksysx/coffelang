@@ -1,49 +1,56 @@
 package ru.alexksysx.coffeelang.token;
 
 public enum TokenType {
-    ILLEGAL("ILLEGAL"),
+    ILLEGAL("ILLEGAL", TokenKind.ETC),
 
-    IDENT("IDENT"),
-    NUMBER("NUMBER"),
+    IDENT("IDENT", TokenKind.ETC),
+    NUMBER("NUMBER", TokenKind.ETC),
+    TIME("TIME", TokenKind.ETC),
 
-    ASSIGN(":="),
-    COMMA(","),
+    ASSIGN(":=", TokenKind.OPERATOR),
+    COMMA(",", TokenKind.ETC),
 
-    LPAREN("("),
-    RPAREN(")"),
+    LPAREN("(", TokenKind.ETC),
+    RPAREN(")", TokenKind.ETC),
 
-    EOL("EOL"),
-    EOF("EOF"),
+    EOL("EOL", TokenKind.ETC),
+    EOF("EOF", TokenKind.ETC),
 
     // keywords
     // команды
-    WAIT("ждать"),
-    GRIND_COFFEE("помолоть_кофе"),
-    SET_PRESSURE("выставить_давление"),
-    SET_TEMPERATURE("выставить_температуру"),
-    PREPARE_DOUBLE_HOLDER("взять_двойной_холдер"),
-    PUT_CUP("поставить_чашку"),
-    INSERT_HOLDER("вставить_холдер_в_группу"),
-    MAKE_COFFEE("готовить_кофе"),
-    SERVE_DRINK("подать_напиток"),
+    WAIT("ждать", TokenKind.OPERATOR),
+    GRIND_COFFEE("помолоть_кофе", TokenKind.OPERATOR),
+    SET_PRESSURE("выставить_давление", TokenKind.OPERATOR),
+    SET_TEMPERATURE("выставить_температуру", TokenKind.OPERATOR),
+    PREPARE_DOUBLE_HOLDER("взять_двойной_холдер", TokenKind.OPERATOR),
+    PUT_CUP("поставить_чашку", TokenKind.OPERATOR),
+    INSERT_HOLDER("вставить_холдер_в_группу", TokenKind.OPERATOR),
+    MAKE_COFFEE("готовить_кофе", TokenKind.OPERATOR),
+    SERVE_DRINK("подать_напиток", TokenKind.OPERATOR),
     // уровни помола
-    GRIND_LEVEL_ESPRESSO("эспрессо"),
-    GRIND_LEVEL_FILTER("воронка"),
-    GRIND_LEVEL_FRENCH_PRESS("фрэнч-пресс"),
-    // Сосуды
-    CUP_COMMON("стакан"),
-    CUP_ESPRESSO("чашка_эспрессо"),
-    CUP_CAPPUCCINO("чашка_каппучино");
+    GRIND_LEVEL_ESPRESSO("эспрессо", TokenKind.GRIND_LEVEL),
+    GRIND_LEVEL_FILTER("воронка", TokenKind.GRIND_LEVEL),
+    GRIND_LEVEL_FRENCH_PRESS("фрэнч-пресс", TokenKind.GRIND_LEVEL),
+    // чашки
+    CUP_COMMON("стакан", TokenKind.CUP),
+    CUP_ESPRESSO("чашка_эспрессо", TokenKind.CUP),
+    CUP_CAPPUCCINO("чашка_каппучино", TokenKind.CUP);
 
 
     private final String literal;
+    private final TokenKind kind;
 
-    TokenType(String literal) {
+    TokenType(String literal, TokenKind kind) {
         this.literal = literal;
+        this.kind = kind;
     }
 
     public String getLiteral() {
         return literal;
+    }
+
+    public TokenKind getKind() {
+        return kind;
     }
 
     public static TokenType ofLiteral(String literal) {

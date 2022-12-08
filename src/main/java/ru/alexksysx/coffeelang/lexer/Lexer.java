@@ -3,13 +3,16 @@ package ru.alexksysx.coffeelang.lexer;
 import ru.alexksysx.coffeelang.token.Token;
 import ru.alexksysx.coffeelang.token.TokenType;
 
-import static ru.alexksysx.coffeelang.token.TokenType.IDENT;
+import static ru.alexksysx.coffeelang.token.TokenType.*;
 
 public class Lexer {
     private String input;
     private int position; // позиция текущего символа
     private int readPosition; // позиция символа за текущим
     private char symbol; // рассматриваемый символ
+
+    public Lexer() {
+    }
 
     public Lexer(String input) {
         this.input = input;
@@ -21,6 +24,10 @@ public class Lexer {
         position = 0;
         readPosition = 0;
         readChar();
+    }
+
+    public String getInput() {
+        return input;
     }
 
     public Token nextToken() {
@@ -47,7 +54,6 @@ public class Lexer {
             case '\n':
                 token = new Token(TokenType.EOL, "");
                 break;
-            case '0':
             case '\u0000':
                 token = new Token(TokenType.EOF, "");
                 break;
@@ -56,7 +62,11 @@ public class Lexer {
                     String literal = readIdentifier();
                     token = new Token(getIdentifier(literal), literal);
                 } else if (isDigit(symbol)) {
-                    token = new Token(TokenType.NUMBER, readNumber());
+                    String number = readNumber();
+                    TokenType type = NUMBER;
+                    if (number.contains(":"))
+                        type = TIME;
+                    token = new Token(type, number);
                 } else {
                     token = new Token(TokenType.ILLEGAL, symbol);
                 }
@@ -67,7 +77,7 @@ public class Lexer {
 
     private void readChar() {
         if (readPosition >= input.length()) {
-            symbol = 0;
+            symbol = '\u0000';
         } else {
             symbol = input.charAt(readPosition);
         }
@@ -113,7 +123,7 @@ public class Lexer {
     }
 
     private static boolean isDigit(char ch) {
-        return Character.isDigit(ch) || ch == '.';
+        return Character.isDigit(ch) || ch == '.' || ch == ':';
     }
 
     public static TokenType getIdentifier(String literal) {

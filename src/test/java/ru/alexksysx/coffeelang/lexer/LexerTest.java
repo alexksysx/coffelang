@@ -25,6 +25,7 @@ public class LexerTest {
                 "поставить_чашку(чашка_эспрессо)\n" +
                 "вставить_холдер_в_группу()\n" +
                 "готовить_кофе(вес_напитка)\n" +
+                "ждать(0:45)\n" +
                 "подать_напиток()";
 
         Token[] list = new Token[] {
@@ -83,8 +84,34 @@ public class LexerTest {
                 new Token(TokenType.IDENT, "вес_напитка"),
                 new Token(TokenType.RPAREN, ")"),
                 new Token(TokenType.EOL, ""),
+                new Token(TokenType.WAIT, "ждать"),
+                new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.TIME, "0:45"),
+                new Token(TokenType.RPAREN, ")"),
+                new Token(TokenType.EOL, ""),
                 new Token(TokenType.SERVE_DRINK, "подать_напиток"),
                 new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.RPAREN, ")"),
+                new Token(TokenType.EOF, "")
+        };
+
+        Lexer l = new Lexer(input);
+        Token t;
+        for (Token expected : list) {
+            t = l.nextToken();
+            LOGGER.info("Найден токен: {}", t);
+            assertEquals(t, expected);
+        }
+    }
+
+
+    @Test
+    public void testIllegalIdent() {
+        String input = "выставить_температуру(*)";
+        Token[] list = new Token[]{
+                new Token(TokenType.SET_TEMPERATURE, "выставить_температуру"),
+                new Token(TokenType.LPAREN, "("),
+                new Token(TokenType.ILLEGAL, "*"),
                 new Token(TokenType.RPAREN, ")"),
                 new Token(TokenType.EOF, "")
         };
