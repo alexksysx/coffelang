@@ -2,6 +2,8 @@ package ru.alexksysx.coffeelang.parser;
 
 import ru.alexksysx.coffeelang.AnalyzeException;
 import ru.alexksysx.coffeelang.lexer.Lexer;
+import ru.alexksysx.coffeelang.operator.impl.*;
+import ru.alexksysx.coffeelang.operator.IOperator;
 import ru.alexksysx.coffeelang.token.Token;
 import ru.alexksysx.coffeelang.token.TokenKind;
 import ru.alexksysx.coffeelang.token.TokenType;
@@ -15,72 +17,66 @@ public class Parser {
         lexer = new Lexer();
     }
 
-    public void parse(String line) throws AnalyzeException {
+    public IOperator parseLine(String line) throws AnalyzeException {
         lexer.setInput(line);
         nextToken();
         nextToken();
-        parseStatement();
+        return parseStatement();
     }
 
-    private void parseStatement() throws AnalyzeException {
+    private IOperator parseStatement() throws AnalyzeException {
         if (currentToken.getTokenType() == TokenType.IDENT) {
-            parseAssignStatement();
+            return parseAssignStatement();
         } else if (currentToken.getTokenType().getKind() == TokenKind.OPERATOR) {
-            parseOperator();
+            return parseOperator();
         } else if (currentToken.getTokenType() == TokenType.EOF || currentToken.getTokenType() == TokenType.EOL) {
-            return;
+            return null;
         } else {
             throw new AnalyzeException("Ожидается идентификатор или команда", lexer.getInput(), currentToken);
         }
     }
 
-    private void parseOperator() throws AnalyzeException {
+    private IOperator parseOperator() throws AnalyzeException {
         switch (currentToken.getTokenType()) {
             case WAIT:
-                parseWait();
-                break;
+                return parseWait();
             case GRIND_COFFEE:
-                parseGrindCoffee();
-                break;
+                return parseGrindCoffee();
             case SET_TEMPERATURE:
-                parseSetTemperature();
-                break;
+                return parseSetTemperature();
             case SET_PRESSURE:
-                parseSetPressure();
-                break;
+                return parseSetPressure();
             case PREPARE_DOUBLE_HOLDER:
-                parsePrepareDoubleHolder();
-                break;
+                return parsePrepareDoubleHolder();
             case PUT_CUP:
-                parsePutCup();
-                break;
+                return parsePutCup();
             case INSERT_HOLDER:
-                parseInsertHolder();
-                break;
+                return parseInsertHolder();
             case MAKE_COFFEE:
-                parseMakeCoffee();
-                break;
+                return parseMakeCoffee();
             case SERVE_DRINK:
-                parseServeDrink();
-                break;
+                return parseServeDrink();
             default:
                 throw new AnalyzeException("Ошибка синтаксиса: неожиданный токен", lexer.getInput(), currentToken);
         }
     }
 
-    private void parseInsertHolder() throws AnalyzeException {
+    private IOperator parseInsertHolder() throws AnalyzeException {
         checkOperatorWithoutArgs();
+        return new InsertHolderOperator();
     }
 
-    private void parseServeDrink() throws AnalyzeException {
+    private IOperator parseServeDrink() throws AnalyzeException {
         checkOperatorWithoutArgs();
+        return new ServeDrinkOperator();
     }
 
-    private void parsePrepareDoubleHolder() throws AnalyzeException {
+    private IOperator parsePrepareDoubleHolder() throws AnalyzeException {
         checkOperatorWithoutArgs();
+        return new PrepareDoubleHolderOperator();
     }
 
-    private void parsePutCup() throws AnalyzeException {
+    private IOperator parsePutCup() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -91,9 +87,10 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
+        return new PutCupOperator();
     }
 
-    private void parseMakeCoffee() throws AnalyzeException {
+    private IOperator parseMakeCoffee() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -104,9 +101,10 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
+        return new MakeCoffeeOperator();
     }
 
-    private void parseSetTemperature() throws AnalyzeException {
+    private IOperator parseSetTemperature() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -117,9 +115,10 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
+        return new SetPressureOperator();
     }
 
-    private void parseSetPressure() throws AnalyzeException {
+    private IOperator parseSetPressure() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -130,9 +129,10 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
+        return new SetPressureOperator();
     }
 
-    private void parseAssignStatement() throws AnalyzeException {
+    private IOperator parseAssignStatement() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.ASSIGN) {
             throw new AnalyzeException("Ошибка синтаксиса: ожидается оператор присваивания \":=\", найдено \"" + peekToken.getLiteral() + "\"", lexer.getInput(), peekToken);
         }
@@ -147,9 +147,10 @@ public class Parser {
         }
         nextToken();
         checkEndOfLine();
+        return new AssignOperator();
     }
 
-    private void parseWait() throws AnalyzeException {
+    private IOperator parseWait() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -160,10 +161,10 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
-
+        return new WaitOperator();
     }
 
-    private void parseGrindCoffee() throws AnalyzeException {
+    private IOperator parseGrindCoffee() throws AnalyzeException {
         if (peekToken.getTokenType() != TokenType.LPAREN)
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \"(\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
@@ -180,6 +181,7 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
+        return new GrindCoffeeOperator();
     }
 
     private void nextToken() throws AnalyzeException {

@@ -4,6 +4,10 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 import ru.alexksysx.coffeelang.AnalyzeException;
+import ru.alexksysx.coffeelang.operator.IOperator;
+import ru.alexksysx.coffeelang.operator.impl.AssignOperator;
+import ru.alexksysx.coffeelang.operator.impl.GrindCoffeeOperator;
+import ru.alexksysx.coffeelang.operator.impl.PrepareDoubleHolderOperator;
 import ru.alexksysx.coffeelang.token.Token;
 import ru.alexksysx.coffeelang.token.TokenType;
 
@@ -38,7 +42,8 @@ public class ParserTest {
     public void testAssign() {
         String input = "помол := эспрессо";
         try {
-            parser.parse(input);
+            IOperator iOperator = parser.parseLine(input);
+            assertTrue(iOperator instanceof AssignOperator);
         } catch (AnalyzeException e) {
             fail("Не должны получить ошибку");
         }
@@ -48,19 +53,22 @@ public class ParserTest {
     public void testGrindCoffee() {
         String input = "помолоть_кофе(12, эспрессо)";
         try {
-            parser.parse(input);
+            IOperator iOperator = parser.parseLine(input);
+            assertTrue(iOperator instanceof GrindCoffeeOperator);
         } catch (AnalyzeException e) {
             fail();
         }
     }
 
     @Test
-    public void failedTest() {
+    public void testPrepareDoubleHolder() {
         String input = "взять_двойной_холдер()";
         String inputNoParens = "взять_двойной_холдер";
         try {
-            parser.parse(input);
-            parser.parse(inputNoParens);
+            IOperator iOperator = parser.parseLine(input);
+            IOperator iOperator1 = parser.parseLine(inputNoParens);
+            assertTrue(iOperator instanceof PrepareDoubleHolderOperator);
+            assertTrue(iOperator1 instanceof PrepareDoubleHolderOperator);
         } catch (AnalyzeException e) {
             fail();
         }
@@ -69,7 +77,7 @@ public class ParserTest {
     @Test(dataProvider = "failedParse")
     public void failedTestGroup(String input, String message, Token token) {
         try {
-            parser.parse(input);
+            parser.parseLine(input);
             fail();
         } catch (AnalyzeException e) {
             assertEquals(e.getMessage(), message);
