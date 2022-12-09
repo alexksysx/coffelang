@@ -13,6 +13,25 @@ import ru.alexksysx.coffeelang.token.TokenType;
 
 public class OperandProcessor {
 
+    public IValue getValue(Token token) throws MemoryException, OperandException {
+        switch (token.getTokenType()) {
+            case NUMBER:
+                return getNumberValue(token);
+            case TIME:
+                return getTimeValue(token);
+            case GRIND_LEVEL_ESPRESSO:
+            case GRIND_LEVEL_FILTER:
+            case GRIND_LEVEL_FRENCH_PRESS:
+                return getGrindLevelValue(token);
+            case CUP_ESPRESSO:
+            case CUP_COMMON:
+            case CUP_CAPPUCCINO:
+                return getCupValue(token);
+            default:
+                throw new OperandException("Ошибка при определении типа данных");
+        }
+    }
+
     public NumberValue getNumberValue(Token token) throws OperandException, MemoryException {
         IValue value;
         if (token.getTokenType() == TokenType.IDENT) {
