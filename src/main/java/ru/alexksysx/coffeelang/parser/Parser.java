@@ -115,7 +115,7 @@ public class Parser {
             throw new AnalyzeException("Ошибка синтаксиса, ожидался символ \")\", получен " + peekToken.getLiteral(), lexer.getInput(), peekToken);
         nextToken();
         checkEndOfLine();
-        return new SetPressureOperator();
+        return new SetTemperatureOperator();
     }
 
     private IOperator parseSetPressure() throws AnalyzeException {
