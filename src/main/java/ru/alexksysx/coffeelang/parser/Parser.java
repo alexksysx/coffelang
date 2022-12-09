@@ -1,6 +1,6 @@
 package ru.alexksysx.coffeelang.parser;
 
-import ru.alexksysx.coffeelang.AnalyzeException;
+import ru.alexksysx.coffeelang.exception.AnalyzeException;
 import ru.alexksysx.coffeelang.lexer.Lexer;
 import ru.alexksysx.coffeelang.operator.impl.*;
 import ru.alexksysx.coffeelang.operator.IOperator;

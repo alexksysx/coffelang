@@ -1,4 +1,4 @@
-package ru.alexksysx.coffeelang;
+package ru.alexksysx.coffeelang.exception;
 
 import ru.alexksysx.coffeelang.token.Token;
 

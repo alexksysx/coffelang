@@ -1,5 +1,6 @@
 package ru.alexksysx.coffeelang.lexer;
 
+import ru.alexksysx.coffeelang.exception.AnalyzeException;
 import ru.alexksysx.coffeelang.token.Token;
 import ru.alexksysx.coffeelang.token.TokenType;
 
@@ -64,8 +65,11 @@ public class Lexer {
                 } else if (isDigit(symbol)) {
                     String number = readNumber();
                     TokenType type = NUMBER;
-                    if (number.contains(":"))
+                    if (number.contains(":")) {
                         type = TIME;
+                        if (number.split(":").length != 2)
+                            type = ILLEGAL;
+                    }
                     token = new Token(type, number);
                 } else {
                     token = new Token(TokenType.ILLEGAL, symbol);

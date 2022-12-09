@@ -1,6 +1,6 @@
 package ru.alexksysx.coffeelang.repl;
 
-import ru.alexksysx.coffeelang.AnalyzeException;
+import ru.alexksysx.coffeelang.exception.AnalyzeException;
 import ru.alexksysx.coffeelang.operator.IOperator;
 import ru.alexksysx.coffeelang.parser.Parser;
 
@@ -22,7 +22,7 @@ public class Repl {
                 out.print(PROMPT);
                 if(scanner.hasNextLine()) {
                     String line = scanner.nextLine();
-                    if (line.equalsIgnoreCase("стоп"))
+                    if (line.equalsIgnoreCase("выход"))
                         break;
                     runCommand(line, out);
                 }

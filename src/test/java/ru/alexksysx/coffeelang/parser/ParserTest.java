@@ -3,7 +3,7 @@ package ru.alexksysx.coffeelang.parser;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import ru.alexksysx.coffeelang.AnalyzeException;
+import ru.alexksysx.coffeelang.exception.AnalyzeException;
 import ru.alexksysx.coffeelang.operator.IOperator;
 import ru.alexksysx.coffeelang.operator.impl.AssignOperator;
 import ru.alexksysx.coffeelang.operator.impl.GrindCoffeeOperator;
