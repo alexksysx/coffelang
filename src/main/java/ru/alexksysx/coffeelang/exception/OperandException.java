@@ -13,4 +13,8 @@ public class OperandException extends Exception{
     public OperandException(Token token, TokenKind tokenKind) {
         super("{Ожидался тип = " + tokenKind + ", получили = " + token + "}");
     }
+
+    public OperandException(String message) {
+        super(message);
+    }
 }
