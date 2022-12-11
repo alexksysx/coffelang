@@ -7,4 +7,8 @@ public class GrindLevelValue extends IValue {
     public GrindLevelValue(Token token) {
         super(token);
     }
+
+    public String getGrindLevel() {
+        return token.getTokenType().getLiteral();
+    }
 }
